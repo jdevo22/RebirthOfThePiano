@@ -7,6 +7,8 @@ public class TimeTravelManager : MonoBehaviour
     public GameObject presentRoom; // Assign the present version of the room
     public float timeLimit = 5f; // Duration before switching back
     private bool isPastActive = false;
+    private bool timeTraveled = false; // One-way travel
+    public FadeInEffect blackOverlay;
 
     private void Start()
     {
@@ -17,9 +19,13 @@ public class TimeTravelManager : MonoBehaviour
 
     public void TriggerTimeTravel()
     {
-        StopAllCoroutines();
-        SwapRooms();
-        StartCoroutine(RevertAfterTime());
+        if (!timeTraveled)
+        {
+            StopAllCoroutines();
+            blackOverlay.transitionOverlay();
+            SwapRooms();
+            //StartCoroutine(RevertAfterTime());
+        }
     }
 
     private void SwapRooms()
@@ -27,19 +33,13 @@ public class TimeTravelManager : MonoBehaviour
         isPastActive = !isPastActive;
         pastRoom.SetActive(isPastActive);
         presentRoom.SetActive(!isPastActive);
+        timeTraveled = true;
     }
 
-    private IEnumerator RevertAfterTime()
-    {
-        yield return new WaitForSeconds(timeLimit);
-        SwapRooms();
-    }
 
-    private void Update() //Testing purposes only
-    {
-        if (Input.GetKeyDown(KeyCode.T))
-        {
-            TriggerTimeTravel();
-        }
-    }
+    //private IEnumerator RevertAfterTime()
+    //{
+    //    yield return new WaitForSeconds(timeLimit);
+    //    SwapRooms();
+    //}
 }
